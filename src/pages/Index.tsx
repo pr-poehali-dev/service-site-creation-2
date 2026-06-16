@@ -65,20 +65,29 @@ const PRICES = [
   },
 ];
 
-const PORTFOLIO = [
-  { id: 1, cat: "reels",    title: "Рилс для эксперта",    img: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=500&q=80" },
-  { id: 2, cat: "portrait", title: "Портрет эксперта",     img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&q=80" },
-  { id: 3, cat: "family",   title: "Семейная фотосессия",  img: "https://images.unsplash.com/photo-1609220136736-443140cffec6?w=500&q=80" },
-  { id: 4, cat: "reels",    title: "Свадебный рилс",       img: "https://images.unsplash.com/photo-1519741497674-611481863552?w=500&q=80" },
-  { id: 5, cat: "clips",    title: "Рекламный ролик",      img: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=500&q=80" },
-  { id: 6, cat: "portrait", title: "Портрет девушки",      img: "https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?w=500&q=80" },
-  { id: 7, cat: "wb",       title: "Карточка для WB",      img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80" },
-  { id: 8, cat: "family",   title: "Семья на природе",     img: "https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=500&q=80" },
-  { id: 9, cat: "clips",    title: "Клип для бренда",      img: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=500&q=80" },
+type PortfolioItem = {
+  id: number;
+  cat: string;
+  title: string;
+  type: "image" | "video";
+  img?: string;
+  videoId?: string;
+};
+
+const PORTFOLIO: PortfolioItem[] = [
+  { id: 1,  cat: "reels",    type: "video", title: "Рилс",              videoId: "c51hpaVkiyA" },
+  { id: 2,  cat: "reels",    type: "video", title: "Рилс",              videoId: "mbnwO1HwGf4" },
+  { id: 3,  cat: "reels",    type: "video", title: "Рилс",              videoId: "1rHKTJj41Is" },
+  { id: 4,  cat: "reels",    type: "video", title: "Рилс",              videoId: "h3lY59wmhF4" },
+  { id: 5,  cat: "reels",    type: "video", title: "Рилс",              videoId: "rKdMC3l6nWI" },
+  { id: 6,  cat: "portrait", type: "image", title: "Портрет эксперта",  img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&q=80" },
+  { id: 7,  cat: "family",   type: "image", title: "Семейная фотосессия", img: "https://images.unsplash.com/photo-1609220136736-443140cffec6?w=500&q=80" },
+  { id: 8,  cat: "portrait", type: "image", title: "Портрет девушки",   img: "https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?w=500&q=80" },
+  { id: 9,  cat: "family",   type: "image", title: "Семья на природе",  img: "https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=500&q=80" },
 ];
 
 const PORT_FILTERS: Record<string, string> = {
-  all: "Все", reels: "Рилсы", portrait: "Портреты", family: "Семья", clips: "Клипы", wb: "WB",
+  all: "Все", reels: "Рилсы", portrait: "Портреты", family: "Семья",
 };
 
 const BLOG_POSTS = [
@@ -295,15 +304,29 @@ export default function Index() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             {filtered.map(item => (
-              <div key={item.id} className="portfolio-item" onClick={() => setLightbox(item)}>
-                <img src={item.img} alt={item.title} loading="lazy" />
-                <div className="overlay">
-                  <span className="text-[10px] uppercase tracking-widest text-rose font-body mb-1">{PORT_FILTERS[item.cat]}</span>
-                  <h3 className="font-display text-lg text-white font-light">{item.title}</h3>
-                  <div className="flex items-center gap-2 mt-1.5 text-[10px] text-white/50 font-body">
-                    <Icon name="ZoomIn" size={11} /><span>Открыть</span>
-                  </div>
-                </div>
+              <div key={item.id} className="portfolio-item"
+                onClick={() => item.type === "image" ? setLightbox(item) : undefined}>
+                {item.type === "video" && item.videoId ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${item.videoId}?controls=1&playsinline=1`}
+                    title={item.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full border-0"
+                    style={{ aspectRatio: "3/4" }}
+                  />
+                ) : (
+                  <>
+                    <img src={item.img} alt={item.title} loading="lazy" />
+                    <div className="overlay">
+                      <span className="text-[10px] uppercase tracking-widest text-rose font-body mb-1">{PORT_FILTERS[item.cat]}</span>
+                      <h3 className="font-display text-lg text-white font-light">{item.title}</h3>
+                      <div className="flex items-center gap-2 mt-1.5 text-[10px] text-white/50 font-body">
+                        <Icon name="ZoomIn" size={11} /><span>Открыть</span>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>
@@ -513,8 +536,8 @@ export default function Index() {
         </footer>
       </main>
 
-      {/* LIGHTBOX */}
-      {lightbox && (
+      {/* LIGHTBOX (только для фото) */}
+      {lightbox && lightbox.type === "image" && (
         <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-6 md:p-10"
           onClick={() => setLightbox(null)}>
           <button className="absolute top-5 right-5 text-white/50 hover:text-white transition-colors"
